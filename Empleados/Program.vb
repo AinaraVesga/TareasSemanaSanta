@@ -19,6 +19,12 @@ Module Program
         Public CONTRASEÑA As String
     End Structure
 
+    ' Estructura para almacenar los diferentes departamentos de la empresa
+    Public Structure departamento
+        Public IDDEP As Integer
+        Public NOMBREDEP As String
+    End Structure
+
 
     ' ATRIBUTOS:
 
@@ -28,11 +34,17 @@ Module Program
 
     ' Definimos los usuarios
     Public us1 As New usuario With {.ID = emp1.ID, .CONTRASEÑA = "1234"}
-    Dim us2 As New usuario With {.ID = emp2.ID, .CONTRASEÑA = "HOLA"}
+    Public us2 As New usuario With {.ID = emp2.ID, .CONTRASEÑA = "HOLA"}
+
+    ' Definimos los departamentos de la empresa
+    Public dep1 As New departamento With {.IDDEP = 1, .NOMBREDEP = "ATENCIÓN AL CLIENTE"}
+    Public dep2 As New departamento With {.IDDEP = 2, .NOMBREDEP = "LOGÍSTICA"}
+    Public dep3 As New departamento With {.IDDEP = 3, .NOMBREDEP = "GERENCIA"}
 
     ' Creamos las listas donde se almacenarán los empleados y los usuarios
     Public empleados As New List(Of empleado) From {emp1, emp2}
     Public usuarios As New List(Of usuario) From {us1, us2}
+    Public departamentos As New List(Of departamento) From {dep1, dep2, dep3}
 
 
     ' FUNCIONES:
