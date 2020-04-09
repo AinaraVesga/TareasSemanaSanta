@@ -51,20 +51,59 @@ Module Program
 
     ' Función para registrar a un nuevo empleado
     Public Sub nuevoUsuario()
+        Dim seguir As Boolean
+        Dim id As Integer
+        ' Comprueba que el identificador introducido no existe dentro del registro de usuarios
+        Do
+            Console.WriteLine("Introduzca su identificador:")
+            id = Console.ReadLine
+            Dim i = 0
+            seguir = True
+            Do
+                If id = usuarios(i).ID Then
+                    Console.WriteLine("Ya existe un usuario con este ID.")
+                    seguir = False
+                Else
+                    i += 1
+                End If
+            Loop While seguir And i < usuarios.Count
+        Loop While seguir = False
 
-        Console.WriteLine("Introduzca su identificador:")
-        Dim id = Console.ReadLine
+        ' Comprueba que las contraseñas coinciden
         Dim pw, pw2 As String
         Do
             Console.WriteLine("Introduzca su contraseña: ")
             pw = Console.ReadLine
             Console.WriteLine("Introduzca de nuevo su contraseña: ")
             pw2 = Console.ReadLine
+            If pw <> pw2 Then
+                Console.WriteLine("Las contraseñas no coinciden.")
+            End If
         Loop Until pw = pw2
         Console.WriteLine("Introduzca su nombre completo: ")
         Dim nombre = Console.ReadLine
-        Console.WriteLine("Introduzca su departamento: ")
-        Dim depart = Console.ReadLine
+
+        ' Comprueba que el departamento introducido coincide con alguno registrado
+        Dim depart As Integer
+        Do
+            Console.WriteLine("Introduzca su departamento: ")
+            depart = Console.ReadLine
+            Dim i = 0
+            seguir = True
+            Do
+                If depart = departamentos(i).IDDEP Then
+                    seguir = False
+                Else
+                    i += 1
+                End If
+            Loop While seguir And i < departamentos.Count
+            If seguir Then
+                Console.WriteLine("No existe el departamento introducido.")
+            Else
+                Console.WriteLine("Pertenece al departamento: " + departamentos(i).NOMBREDEP)
+            End If
+        Loop While seguir
+
         Console.WriteLine("Introduzca su edad: ")
         Dim edad = Console.ReadLine
         Console.WriteLine("Introduzca sus años trabajados: ")
@@ -90,36 +129,59 @@ Module Program
         Do
             Console.WriteLine("Introduzca su usuario: ")
             Dim user = Console.ReadLine
-            Console.WriteLine("Introduzca su contraseña: ")
-            Dim pw = Console.ReadLine
 
-            ' Comprobamos si existe el usuario
-            Dim nuevo As New usuario With {.ID = user, .CONTRASEÑA = pw}
-
-            If usuarios.IndexOf(nuevo) = -1 Then
-                Console.WriteLine("Usuario o contraseña no válidos.")
-                Console.WriteLine("Introduzca '1' para intentarlo de nuevo o '2' para registrarse:")
-                Dim resp = Console.ReadLine
-
-                ' Pedimos al empleado que se registre
-                If resp = 2 Then
-                    nuevoUsuario()
-                End If
-
+            ' Si el usuario = 0 se para el programa
+            If user = 0 Then
+                Return False
             Else
-                Console.WriteLine("Se ha identificado correctamente.")
-                continuar = False
-            End If
+                Console.WriteLine("Introduzca su contraseña: ")
+                Dim pw = Console.ReadLine
 
+                ' Comprobamos si existe el usuario
+                Dim nuevo As New usuario With {.ID = user, .CONTRASEÑA = pw}
+
+                If usuarios.IndexOf(nuevo) = -1 Then
+                    Console.WriteLine("Usuario o contraseña no válidos.")
+                    Console.WriteLine("Introduzca '1' para intentarlo de nuevo o '2' para registrarse:")
+                    Dim resp = Console.ReadLine
+
+                    ' Pedimos al empleado que se registre
+                    If resp = 2 Then
+                        nuevoUsuario()
+                    End If
+
+                Else
+                    Console.WriteLine("Se ha identificado correctamente.")
+                    continuar = False
+                End If
+                Return True
+            End If
         Loop While continuar
+    End Function
+
+    ' Función para calcular los días de vacaciones que pertenecen a un empleado
+    Public Function vacaciones()
 
     End Function
 
+    ' Función para calcular el sueldo de un empleado
+    Public Function sueldo()
+
+    End Function
+
+    ' Función para imprimir por pantalla los datos de un usuario
+    Public Function datosEmpleado()
+
+    End Function
 
     ' PROGRAMA PRINCIPAL:
     Sub Main(args As String())
 
-        login()
+        ' Llamamos en cada ciclo a la función login para identificar los usuarios
+        Dim seguir As Boolean
+        Do
+            seguir = login()
+        Loop While seguir
 
     End Sub
 End Module
