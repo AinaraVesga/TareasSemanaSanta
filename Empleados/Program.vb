@@ -127,17 +127,13 @@ Module Program
         Do
             Console.WriteLine("Introduzca su identificador:")
             id = Console.ReadLine
-            Dim i = 0
-            seguir = True
-            Do
-                If id = usuarios(i).ID Then
-                    Console.WriteLine("Ya existe un usuario con este ID.")
-                    seguir = False
-                Else
-                    i += 1
-                End If
-            Loop While seguir And i < usuarios.Count
-        Loop While seguir = False
+            If idRegistradoU(id) Then
+                Console.WriteLine("Ya existe un usuario registrado con el identificador " + id)
+                seguir = True
+            Else
+                seguir = False
+            End If
+        Loop While seguir = True
 
         ' Comprueba que las contraseñas coinciden
         Dim pw, pw2 As String
@@ -185,7 +181,7 @@ Module Program
         empleados.Add(nuevoEmpleado)
         usuarios.Add(nuevoUser)
 
-        Console.WriteLine("Se ha registrado correctamente.")
+        Console.WriteLine("Se ha registrado correctamente")
 
     End Sub
 
@@ -221,7 +217,7 @@ Module Program
                     End If
 
                 Else
-                    Console.WriteLine("Se ha identificado correctamente.")
+                    datosEmpleado(user)
                     continuar = False
                 End If
                 Return True
@@ -231,25 +227,63 @@ Module Program
 
     ' Función para calcular los días de vacaciones que pertenecen a un empleado
     Public Function vacaciones(id As Integer)
-        Select Case id
-            Case 1
+        Dim vac = 0
 
-            Case 2
+        If idRegistradoE(id) Then
+            Dim i = posIdEmpleados(id)
+            Dim trab = empleados(i).ANIOSTRAB
+            Dim dpto = empleados(i).DPTO
 
-            Case 3
+            If trab > 2 And trab < 7 Then
+                vac = 15
+            ElseIf trab >= 7 Then
+                If dpto = 1 Then
+                    vac = 20
+                ElseIf dpto = 2 Then
+                    vac = 25
+                ElseIf dpto = 3 Then
+                    vac = 30
+                End If
+            End If
+        End If
 
-            Case Else
-
-        End Select
+        Return vac
     End Function
 
     ' Función para calcular el sueldo de un empleado
-    Public Function sueldo()
+    Public Function sueldo(id As Integer)
+        Dim salary = 0
+        Dim base = 1500
 
+        If idRegistradoE(id) Then
+            Dim i = posIdEmpleados(id)
+            Dim edad = empleados(i).EDAD
+
+            If edad < 18 Then
+                Console.WriteLine("Con " + edad + " años no está permitido trabajar.")
+            ElseIf edad >= 18 And edad <= 50 Then
+                salary = base + base * 0.05
+            ElseIf edad > 50 And edad <= 60 Then
+                salary = base + base * 0.1
+            ElseIf edad > 60 Then
+                salary = base + base * 0.15
+            End If
+
+        End If
+
+        Return salary
     End Function
 
     ' Función para imprimir por pantalla los datos de un usuario
-    Public Function datosEmpleado()
+    Public Function datosEmpleado(id As Integer)
+        'Dim id = 1
+        Dim i = posIdEmpleados(id)
+
+        Console.WriteLine(("").PadRight(100, "-"))
+        Console.WriteLine("{0} {1,-30} {0} {2,-10} {0} {3,-15} {0} {4,-15} {0} {5,-15} {0}", "|", "NOMBRE", "EDAD", "T. LABORADO", "DÍAS VAC.", "SALARIO (EUROS)")
+        Console.WriteLine(("").PadRight(100, "-"))
+        Console.WriteLine("{0} {1,-30} {0} {2,-10} {0} {3,-15} {0} {4,-15} {0} {5,-15} {0}", "|", empleados(i).NOMBRE, empleados(i).EDAD, empleados(i).ANIOSTRAB, vacaciones(id), sueldo(id))
+        Console.WriteLine(("").PadRight(100, "-"))
 
     End Function
 
