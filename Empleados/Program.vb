@@ -49,6 +49,76 @@ Module Program
 
     ' FUNCIONES:
 
+    ' Función para saber si un ID está registrado en usuarios
+    Public Function idRegistradoU(id As Integer)
+        Dim esta = False
+        Dim i = 0
+
+        While esta = False And i < usuarios.Count
+            If id = usuarios(i).ID Then
+                esta = True
+            Else
+                i += 1
+            End If
+        End While
+
+        Return esta
+    End Function
+
+    ' Función para encontrar un usuario a partir de su ID
+    Public Function posIdUsuarios(id As Integer)
+        Dim encontrado = False
+        Dim i = 0
+
+        If idRegistradoU(id) Then
+
+            While encontrado = False And i < usuarios.Count
+                If id = usuarios(i).ID Then
+                    encontrado = True
+                Else
+                    i += 1
+                End If
+            End While
+        End If
+
+        Return i
+    End Function
+
+    ' Función para saber si un ID está registrado en empleados
+    Public Function idRegistradoE(id As Integer)
+        Dim esta = False
+        Dim i = 0
+
+        While esta = False And i < empleados.Count
+            If id = empleados(i).ID Then
+                esta = True
+            Else
+                i += 1
+            End If
+        End While
+
+        Return esta
+    End Function
+
+    ' Función para encontrar un usuario a partir de su ID
+    Public Function posIdEmpleados(id As Integer)
+        Dim encontrado = False
+        Dim i = 0
+
+        If idRegistradoE(id) Then
+
+            While encontrado = False And i < empleados.Count
+                If id = empleados(i).ID Then
+                    encontrado = True
+                Else
+                    i += 1
+                End If
+            End While
+        End If
+
+        Return i
+    End Function
+
     ' Función para registrar a un nuevo empleado
     Public Sub nuevoUsuario()
         Dim seguir As Boolean
@@ -160,8 +230,17 @@ Module Program
     End Function
 
     ' Función para calcular los días de vacaciones que pertenecen a un empleado
-    Public Function vacaciones()
+    Public Function vacaciones(id As Integer)
+        Select Case id
+            Case 1
 
+            Case 2
+
+            Case 3
+
+            Case Else
+
+        End Select
     End Function
 
     ' Función para calcular el sueldo de un empleado
