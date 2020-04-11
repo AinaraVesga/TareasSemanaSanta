@@ -1,4 +1,6 @@
 Imports System
+Imports System.IO
+Imports System.Text
 
 Module Program
 
@@ -286,6 +288,40 @@ Module Program
         Console.WriteLine(("").PadRight(100, "-"))
 
     End Function
+
+    ' Función para crear un archivo de texto
+    Public Function crearFichero()
+        Dim fecha
+        Dim ruta As String = "C:\Users\Ainara\Documents\AA_EMPLEADOS\registroEmpleados.log"
+
+        ' Crear o sobrescribir el archivo
+        Dim fs As FileStream = File.Create(ruta)
+
+
+        ' Cerramos el fichero
+        fs.Close()
+
+        ' Lo volvemos a abrir
+        FileOpen(1, "C:\Users\Ainara\Documents\AA_EMPLEADOS\registroEmpleados.log", OpenMode.Output)
+
+        ' Escribimos el encabezado
+        PrintLine(1, "Fecha: " + Now)
+        PrintLine(1)
+        PrintLine(1)
+
+        Dim columnas = {"|", "NOMBRE", "EDAD", "T. LABORADO", "DÍAS VAC.", "SALARIO (EUROS)"}
+        Dim encabezado = String.Format("{0} {1,-30} {0} {2,-10} {0} {3,-15} {0} {4,-15} {0} {5,-15} {0}", columnas)
+        PrintLine(1, encabezado)
+
+        encabezado = String.Format(("").PadRight(100, "-"))
+        PrintLine(1, encabezado)
+
+        ' Cerramos el fichero
+        fs.Close()
+
+    End Function
+
+    ' Función para escribir en el fichero .log
 
     ' PROGRAMA PRINCIPAL:
     Sub Main(args As String())
