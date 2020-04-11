@@ -332,7 +332,7 @@ Module Program
     ' PROGRAMA PRINCIPAL:
     Sub Main(args As String())
         crearFichero()
-        ' Llamamos en cada ciclo a la función login para identificar los usuarios
+        ' Llamamos en cada ciclo a la función login para identificar los usuarioss
         Dim seguir As Boolean
         Do
             seguir = login()
