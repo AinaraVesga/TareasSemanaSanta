@@ -121,6 +121,107 @@ Module Program
         Return i
     End Function
 
+    ' Función para calcular los días de vacaciones que tiene un empleado
+    Public Function vacaciones(id As Integer)
+        Dim vac = 0
+
+        If idRegistradoE(id) Then
+            Dim i = posIdEmpleados(id)
+            Dim trab = empleados(i).ANIOSTRAB
+            Dim dpto = empleados(i).DPTO
+
+            If trab > 2 And trab < 7 Then
+                vac = 15
+            ElseIf trab >= 7 Then
+                If dpto = 1 Then
+                    vac = 20
+                ElseIf dpto = 2 Then
+                    vac = 25
+                ElseIf dpto = 3 Then
+                    vac = 30
+                End If
+            End If
+        End If
+
+        Return vac
+    End Function
+
+    ' Función para calcular el sueldo de un empleado
+    Public Function sueldo(id As Integer)
+        Dim salary = 0
+        Dim base = 1500
+
+        If idRegistradoE(id) Then
+            Dim i = posIdEmpleados(id)
+            Dim edad = empleados(i).EDAD
+
+            If edad < 18 Then
+                Console.WriteLine("Con " + edad + " años no está permitido trabajar.")
+            ElseIf edad >= 18 And edad <= 50 Then
+                salary = base + base * 0.05
+            ElseIf edad > 50 And edad <= 60 Then
+                salary = base + base * 0.1
+            ElseIf edad > 60 Then
+                salary = base + base * 0.15
+            End If
+
+        End If
+
+        Return salary
+    End Function
+
+    ' Función para crear un archivo de texto --> Aquí se guardaraán todos los empleados que han sido identificados
+    Public Function crearFichero()
+        Dim ruta As String = "C:\Users\Ainara\Documents\AA_EMPLEADOS\registroEmpleados.log"
+
+        ' Crear o sobrescribir el archivo
+        Dim fs As FileStream = File.Create(ruta)
+
+
+        ' Cerramos el fichero
+        fs.Close()
+
+        ' Lo volvemos a abrir
+        FileOpen(1, "C:\Users\Ainara\Documents\AA_EMPLEADOS\registroEmpleados.log", OpenMode.Output)
+
+        ' Escribimos el encabezado
+        PrintLine(1, "Fecha: " + Now)
+        PrintLine(1)
+        PrintLine(1)
+
+        Dim columnas = {"|", "NOMBRE", "EDAD", "T. LABORADO", "DÍAS VAC.", "SALARIO (EUROS)"}
+        Dim encabezado = String.Format("{0} {1,-30} {0} {2,-10} {0} {3,-15} {0} {4,-15} {0} {5,-15} {0}", columnas)
+        PrintLine(1, encabezado)
+
+        encabezado = String.Format(("").PadRight(100, "-"))
+        PrintLine(1, encabezado)
+
+    End Function
+
+    ' Función para escribir en el fichero --> Para escribir en el fichero cada línea de identificación del usuario
+    Public Function escribirFichero(linea As String)
+        ' FileOpen(1, "C:\Users\Ainara\Documents\AA_EMPLEADOS\registroEmpleados.log", OpenMode.Output)
+        PrintLine(1, linea)
+
+    End Function
+
+    ' Función para imprimir por pantalla y en el fichero de refistros los datos de un usuario
+    Public Function datosEmpleado(id As Integer)
+        'Dim id = 1
+        Dim i = posIdEmpleados(id)
+
+        Console.WriteLine(("").PadRight(100, "-"))
+        Console.WriteLine("{0} {1,-30} {0} {2,-10} {0} {3,-15} {0} {4,-15} {0} {5,-15} {0}", "|", "NOMBRE", "EDAD", "T. LABORADO", "DÍAS VAC.", "SALARIO (EUROS)")
+        Console.WriteLine(("").PadRight(100, "-"))
+
+        Dim columnas = {"|", empleados(i).NOMBRE, empleados(i).EDAD, empleados(i).ANIOSTRAB, vacaciones(id), sueldo(id)}
+        Dim linea = String.Format("{0} {1,-30} {0} {2,-10} {0} {3,-15} {0} {4,-15} {0} {5,-15} {0}", columnas)
+        Console.WriteLine(linea)
+        escribirFichero(linea)
+        Console.WriteLine(("").PadRight(100, "-"))
+
+    End Function
+
     ' Función para registrar a un nuevo empleado
     Public Sub nuevoUsuario()
         Dim seguir As Boolean
@@ -227,110 +328,16 @@ Module Program
         Loop While continuar
     End Function
 
-    ' Función para calcular los días de vacaciones que pertenecen a un empleado
-    Public Function vacaciones(id As Integer)
-        Dim vac = 0
-
-        If idRegistradoE(id) Then
-            Dim i = posIdEmpleados(id)
-            Dim trab = empleados(i).ANIOSTRAB
-            Dim dpto = empleados(i).DPTO
-
-            If trab > 2 And trab < 7 Then
-                vac = 15
-            ElseIf trab >= 7 Then
-                If dpto = 1 Then
-                    vac = 20
-                ElseIf dpto = 2 Then
-                    vac = 25
-                ElseIf dpto = 3 Then
-                    vac = 30
-                End If
-            End If
-        End If
-
-        Return vac
-    End Function
-
-    ' Función para calcular el sueldo de un empleado
-    Public Function sueldo(id As Integer)
-        Dim salary = 0
-        Dim base = 1500
-
-        If idRegistradoE(id) Then
-            Dim i = posIdEmpleados(id)
-            Dim edad = empleados(i).EDAD
-
-            If edad < 18 Then
-                Console.WriteLine("Con " + edad + " años no está permitido trabajar.")
-            ElseIf edad >= 18 And edad <= 50 Then
-                salary = base + base * 0.05
-            ElseIf edad > 50 And edad <= 60 Then
-                salary = base + base * 0.1
-            ElseIf edad > 60 Then
-                salary = base + base * 0.15
-            End If
-
-        End If
-
-        Return salary
-    End Function
-
-    ' Función para imprimir por pantalla los datos de un usuario
-    Public Function datosEmpleado(id As Integer)
-        'Dim id = 1
-        Dim i = posIdEmpleados(id)
-
-        Console.WriteLine(("").PadRight(100, "-"))
-        Console.WriteLine("{0} {1,-30} {0} {2,-10} {0} {3,-15} {0} {4,-15} {0} {5,-15} {0}", "|", "NOMBRE", "EDAD", "T. LABORADO", "DÍAS VAC.", "SALARIO (EUROS)")
-        Console.WriteLine(("").PadRight(100, "-"))
-        Console.WriteLine("{0} {1,-30} {0} {2,-10} {0} {3,-15} {0} {4,-15} {0} {5,-15} {0}", "|", empleados(i).NOMBRE, empleados(i).EDAD, empleados(i).ANIOSTRAB, vacaciones(id), sueldo(id))
-        Console.WriteLine(("").PadRight(100, "-"))
-
-    End Function
-
-    ' Función para crear un archivo de texto
-    Public Function crearFichero()
-        Dim fecha
-        Dim ruta As String = "C:\Users\Ainara\Documents\AA_EMPLEADOS\registroEmpleados.log"
-
-        ' Crear o sobrescribir el archivo
-        Dim fs As FileStream = File.Create(ruta)
-
-
-        ' Cerramos el fichero
-        fs.Close()
-
-        ' Lo volvemos a abrir
-        FileOpen(1, "C:\Users\Ainara\Documents\AA_EMPLEADOS\registroEmpleados.log", OpenMode.Output)
-
-        ' Escribimos el encabezado
-        PrintLine(1, "Fecha: " + Now)
-        PrintLine(1)
-        PrintLine(1)
-
-        Dim columnas = {"|", "NOMBRE", "EDAD", "T. LABORADO", "DÍAS VAC.", "SALARIO (EUROS)"}
-        Dim encabezado = String.Format("{0} {1,-30} {0} {2,-10} {0} {3,-15} {0} {4,-15} {0} {5,-15} {0}", columnas)
-        PrintLine(1, encabezado)
-
-        encabezado = String.Format(("").PadRight(100, "-"))
-        PrintLine(1, encabezado)
-
-        ' Cerramos el fichero
-        fs.Close()
-
-    End Function
-
-    ' Función para escribir en el fichero .log
 
     ' PROGRAMA PRINCIPAL:
     Sub Main(args As String())
-
+        crearFichero()
         ' Llamamos en cada ciclo a la función login para identificar los usuarios
         Dim seguir As Boolean
         Do
             seguir = login()
         Loop While seguir
 
+        FileClose()
     End Sub
 End Module
