@@ -48,6 +48,10 @@ Module Program
     Public usuarios As New List(Of usuario) From {us1, us2}
     Public departamentos As New List(Of departamento) From {dep1, dep2, dep3}
 
+    ' Definimos las listas donde se almacenarán los días de vacaciones y los sueldos para calcular luego las medias
+    Public vacas As New List(Of Integer)
+    Public sueldos As New List(Of Double)
+
 
     ' FUNCIONES:
 
@@ -148,7 +152,7 @@ Module Program
 
     ' Función para calcular el sueldo de un empleado
     Public Function sueldo(id As Integer)
-        Dim salary = 0
+        Dim salary As Double = 0
         Dim base = 1500
 
         If idRegistradoE(id) Then
@@ -214,11 +218,20 @@ Module Program
         Console.WriteLine("{0} {1,-30} {0} {2,-10} {0} {3,-15} {0} {4,-15} {0} {5,-15} {0}", "|", "NOMBRE", "EDAD", "T. LABORADO", "DÍAS VAC.", "SALARIO (EUROS)")
         Console.WriteLine(("").PadRight(100, "-"))
 
-        Dim columnas = {"|", empleados(i).NOMBRE, empleados(i).EDAD, empleados(i).ANIOSTRAB, vacaciones(id), sueldo(id)}
+        ' Calculamos las vacaciones y el sueldo
+        Dim vac As Integer = vacaciones(id)
+        Dim sue As Double = sueldo(id)
+
+        ' Mostramos los datos del empleado y los guardamos en el fichero .LOG
+        Dim columnas = {"|", empleados(i).NOMBRE, empleados(i).EDAD, empleados(i).ANIOSTRAB, vac, sue}
         Dim linea = String.Format("{0} {1,-30} {0} {2,-10} {0} {3,-15} {0} {4,-15} {0} {5,-15} {0}", columnas)
         Console.WriteLine(linea)
         escribirFichero(linea)
         Console.WriteLine(("").PadRight(100, "-"))
+
+        ' Añadimos el sueldo y las vacaciones a las listas
+        vacas.Add(vac)
+        sueldos.Add(sue)
 
     End Function
 
@@ -328,15 +341,82 @@ Module Program
         Loop While continuar
     End Function
 
+    ' Función que calcula la media de VACACIONES
+    Public Function mediaVac(vacas As List(Of Integer))
+        Dim suma As Integer = 0
+        For Each dias As Integer In vacas
+            suma += dias
+        Next
+        Dim media As Double = suma / vacas.Count
+        Return media
+    End Function
+
+    ' Función que realiza la tarea de calcular la media de vacaciones
+    Public Async Function mediaVacTask(vacas As List(Of Integer)) As Task(Of Double)
+        Dim media As Double = Await Task.Run(
+                Function()
+                    Return mediaVac(vacas)
+                End Function
+            )
+        Return media
+    End Function
+
+    ' Subrutina que calcula el tiempo de ejecucion de la tarea mediaVacTask
+    Async Sub mediaVacAsync(vacas As List(Of Integer))
+        Dim t0 = Now
+        Dim media = Await mediaVacTask(vacas)
+        Console.WriteLine($"La media de todas las vacaciones es de {media} días.")
+        Dim duracion As TimeSpan = Now - t0
+        Console.WriteLine($"{duracion.Milliseconds} milliseconds Async.")
+    End Sub
+
+    ' Función que calcula la media de SALARIOS
+    Public Function mediaSal(sueldos As List(Of Double))
+        Dim suma As Integer = 0
+        For Each salario As Integer In sueldos
+            suma += salario
+        Next
+        Dim media As Double = suma / sueldos.Count
+        Return media
+    End Function
+
+    ' Función que realiza la tarea de calcular la media de salarios
+    Public Async Function mediaSalTask(sueldos As List(Of Double)) As Task(Of Double)
+        Dim media As Double = Await Task.Run(
+                Function()
+                    Return mediaSal(sueldos)
+                End Function
+            )
+        Return media
+    End Function
+
+    ' Subrutina que calcula el tiempo de ejecucion de la tarea mediaVacTask
+    Async Sub mediaSalAsync(sueldos As List(Of Double))
+        Dim t0 = Now
+        Dim media = Await mediaSalTask(sueldos)
+        Console.WriteLine($"La media de todos los salarios es de {media} EUROS.")
+        Dim duracion As TimeSpan = Now - t0
+        Console.WriteLine($"{duracion.Milliseconds} milliseconds Async.")
+    End Sub
 
     ' PROGRAMA PRINCIPAL:
     Sub Main(args As String())
+
+        ' Creamos el fichero donde se guardaran los datos de los empleados identificados
         crearFichero()
+
         ' Llamamos en cada ciclo a la función login para identificar los usuarioss
         Dim seguir As Boolean
         Do
             seguir = login()
         Loop While seguir
+
+        ' Calculamos la media de vacaciones y sueldos
+        Console.WriteLine("Running Async Media Vacaciones...")
+        mediaVacAsync(vacas)
+
+        Console.WriteLine("Running Async Media Salarios...")
+        mediaSalAsync(sueldos)
 
         FileClose()
     End Sub
